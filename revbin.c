@@ -141,22 +141,32 @@ reverse (unsigned x, unsigned width)
         return acc;
 }
 
+/* This is funny stuff.
+ *
+ * In theory, we'd want to iterate through the pairs of low-order bits
+ * in morton order.  Instead, we iterate through the interleaved values
+ * in order (trivial), and unswizzle the low order bits.
+ */
 static unsigned
 fill_pairs (unsigned width, pair_t * pairs)
 {
         unsigned alloc = 0,
                  half  = (width+1)/2;
-        ul     max = 1ul<<width,
-           top_bit = (width&1)?1ul<<(half-1):0ul;
-        /* for odd sizes, unswizzled j "borrows" its top bit from i */
-        for (ul i = 0; i < max; i++) {
-                pair_t pair = unswizzle(i, half);
-                pair.j |= pair.i&top_bit;
-
-                ul ri = reverse(pair.i, width), 
+        ul     max = 1ul<<width;
+        /* for odd sizes, unswizzled j conceptually "borrows" its top
+         * bit from i; however, it's immediately ORed with the reverse
+         * of i, which will have the right top bit value in the right
+         * location, so all's well that ends well.
+         */
+        for (ul swizzled = 0; swizzled < max; swizzled++) {
+                pair_t pair = unswizzle(swizzled, half);
+                ul  i = pair.i,
+                    j = pair.j,
+                   ri = reverse(pair.i, width), 
                    rj = reverse(pair.j, width);
 
-                ul i = pair.i|rj, j = pair.j|ri;
+                i |= rj;
+                j |= ri;
                 if (i <= j) {
                         pairs[alloc].i = (i<<LEAF_WIDTH)*sizeof(v2d);
                         pairs[alloc].j = (j<<LEAF_WIDTH)*sizeof(v2d);
