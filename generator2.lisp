@@ -40,6 +40,8 @@
                      (j (cdr pair))
                      (x (logior i (bit-reverse j width)))
                      (y (logior j (bit-reverse i width))))
+                ;; when width is odd, only consider pairs
+                ;; that are the same in the top bit.
                 (when (or (= lower rest)
                           (not (logbitp rest (logxor i j))))
                   (list (cons x y)))))
