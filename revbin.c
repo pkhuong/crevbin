@@ -151,7 +151,7 @@ fill_pairs (unsigned width, pair_t * pairs)
         /* for odd sizes, unswizzled j "borrows" its top bit from i */
         for (ul i = 0; i < max; i++) {
                 pair_t pair = unswizzle(i, half);
-                pair.j |= (pair.i&top_bit);
+                pair.j |= pair.i&top_bit;
 
                 ul ri = reverse(pair.i, width), 
                    rj = reverse(pair.j, width);
