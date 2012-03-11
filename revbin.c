@@ -67,7 +67,7 @@ void block_swap_ (unsigned shift, revbin_plan_t plan,
 }
 
 static
-void block_swap(revbin_plan_t plan, v2d * restrict data)
+void block_swap (revbin_plan_t plan, v2d * restrict data)
 {
         return block_swap_(plan->shift, plan, data);
 }
@@ -224,7 +224,7 @@ plans [8*sizeof(long)] =
 
 
 revbin_plan_t
-revbin_plan(unsigned width)
+revbin_plan (unsigned width)
 {
         assert(width < 8*sizeof(long));
 
