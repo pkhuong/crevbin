@@ -1,6 +1,6 @@
 (defvar *outer-width* 3)
 (defvar *small-width-max* (* 2 (1+ *outer-width*)))
-(defvar *medium-width-max* 20)
+(defvar *medium-width-max* 24)
 
 (defun bit-reverse (x &optional (width *outer-width*))
   (let ((acc 0)
@@ -117,7 +117,7 @@ LINKAGE void PREFIX(~D) ARGLIST
                         upto *medium-width-max*
                       collect i)))
 
-(defun emit-include-file (&key (name "block_swap_bits.h")
+(defun emit-include-file (&key (name "revbin_bits.h")
                             ((:width *outer-width*) *outer-width*))
   (with-open-file (s name :direction :output :if-exists :supersede)
     (format s "~
@@ -143,7 +143,7 @@ LINKAGE void PREFIX(~D) ARGLIST
 #endif
 ")))
 
-(defun emit-small-bit-reverse-file (&key (name "small_reverse.inc")
+(defun emit-small-bit-reverse-file (&key (name "small_revbin.inc")
                                       (width *small-width-max*))
   (with-open-file (s name :direction :output :if-exists :supersede)
     (dotimes (i (1+ width))

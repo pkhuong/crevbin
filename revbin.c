@@ -1,5 +1,5 @@
 #include "revbin.h"
-#include "block_swap_bits.h"
+#include "revbin_bits.h"
 #include <stdlib.h>
 #include <assert.h>
 
@@ -89,7 +89,7 @@ FOREACH_MEDIUM_REV(BLOCK_SWAP_N)
                 if (I < J)                              \
                         SWAP_V2D(data[I], data[J]);     \
         } while (0)
-#include "small_reverse.inc"
+#include "small_revbin.inc"
 #undef SWAP
 #undef ARGLIST
 #undef PREFIX

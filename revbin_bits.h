@@ -1,9 +1,9 @@
-#ifndef BLOCK_SWAP_BITS_H
-#define BLOCK_SWAP_BITS_H
+#ifndef REVBIN_BITS_H
+#define REVBIN_BITS_H
 
 #define LEAF_WIDTH       3
 #define SMALL_WIDTH_MAX  8
-#define MEDIUM_WIDTH_MAX 20
+#define MEDIUM_WIDTH_MAX 24
 
 #define PRELOAD_REV(SHIFT, SCALE) \
 	const ul rev0 = (0UL<<(SHIFT))*(SCALE);\
@@ -105,6 +105,10 @@
 	MACRO(17)\
 	MACRO(18)\
 	MACRO(19)\
-	MACRO(20)
+	MACRO(20)\
+	MACRO(21)\
+	MACRO(22)\
+	MACRO(23)\
+	MACRO(24)
 
 #endif
