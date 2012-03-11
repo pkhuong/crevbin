@@ -103,7 +103,8 @@ FOREACH_MEDIUM_REV(BLOCK_SWAP_N)
 #undef PREFIX
 #undef LINKAGE
 
-const struct swap_plan small_plans[] =
+static const struct
+swap_plan small_plans[] =
 {
 #define MAKE_PLAN(N) {.function = block_swap_##N,\
                       .shift = 0, .npairs = 0},
@@ -111,7 +112,8 @@ const struct swap_plan small_plans[] =
 #undef MAKE_PLAN
 };
 
-const swap_function_t medium_swap_functions[] =
+static const swap_function_t 
+medium_swap_functions[] =
 {
 #define NAME_FUNCTION(N) block_swap_##N,
         FOREACH_MEDIUM_REV(NAME_FUNCTION)
@@ -220,7 +222,8 @@ make_offset_pairs (unsigned middle_width, swap_function_t function)
         return plan;
 }
 
-const struct swap_plan * plans [8*sizeof(long)] =
+static const struct swap_plan *
+plans [8*sizeof(long)] =
 {
 #define SMALL_PLAN(N) small_plans+N,
         FOREACH_SMALL_REV(SMALL_PLAN)
