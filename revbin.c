@@ -142,39 +142,18 @@ reverse (unsigned x, unsigned width)
 }
 
 static unsigned
-fill_even_pairs (unsigned width, pair_t * pairs)
-{
-        unsigned alloc = 0,
-                 half  = width/2;
-        ul max = 1ul<<width;
-        for (ul i = 0; i < max; i++) {
-                pair_t pair = unswizzle(i, half);
-                ul ri = reverse(pair.i, width), 
-                   rj = reverse(pair.j, width);
-
-                ul i = pair.i|rj, j = pair.j|ri;
-                if (i <= j) {
-                        pairs[alloc].i = (i<<LEAF_WIDTH)*sizeof(v2d);
-                        pairs[alloc].j = (j<<LEAF_WIDTH)*sizeof(v2d);
-                        alloc++;
-                }
-        }
-
-        return alloc;
-}
-
-
-static unsigned 
-fill_odd_pairs (unsigned width, pair_t * pairs)
+fill_pairs (unsigned width, pair_t * pairs)
 {
         unsigned alloc = 0,
                  half  = (width+1)/2;
-
-        ul max = 1ul<<width, top_bit = 1ul<<half;
+        ul     max = 1ul<<width,
+           top_bit = (width&1)?1ul<<(half-1):0ul;
+        /* for odd sizes, unswizzled j "borrows" its top bit from i */
         for (ul i = 0; i < max; i++) {
                 pair_t pair = unswizzle(i, half);
                 pair.j |= (pair.i&top_bit);
-                ul ri = reverse(pair.i, width),
+
+                ul ri = reverse(pair.i, width), 
                    rj = reverse(pair.j, width);
 
                 ul i = pair.i|rj, j = pair.j|ri;
@@ -203,13 +182,7 @@ make_offset_pairs (unsigned middle_width, block_function_t function)
         plan->function = function;
         plan->shift = middle_width+LEAF_WIDTH;
         plan->npairs = npairs;
-        if (middle_width&1) {
-                assert(fill_odd_pairs(middle_width, plan->pairs)
-                       == npairs);
-        } else {
-                assert(fill_even_pairs(middle_width, plan->pairs)
-                       == npairs);
-        }
+        assert(fill_pairs(middle_width, plan->pairs) == npairs);
 
         return plan;
 }
