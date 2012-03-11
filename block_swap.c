@@ -73,20 +73,22 @@ void block_swap_(unsigned shift,
 #undef SWAP_DIFF
 }
 
+static
 void block_swap(const struct swap_plan * plan,
                 v2d * restrict data)
 {
         return block_swap_(plan->shift, plan, data);
 }
 
-#define BLOCK_SWAP_N(N)                                         \
-        void block_swap_##N (const struct swap_plan * plan,     \
-                             v2d * restrict data) {             \
-                return block_swap_(N-LEAF_WIDTH, plan, data);   \
+#define BLOCK_SWAP_N(N)                                                 \
+        static void block_swap_##N (const struct swap_plan * plan,      \
+                                    v2d * restrict data) {              \
+                return block_swap_(N-LEAF_WIDTH, plan, data);           \
         }
 FOREACH_MEDIUM_REV(BLOCK_SWAP_N)
 #undef BLOCK_SWAP_N
 
+#define LINKAGE static
 #define PREFIX(N) block_swap_##N
 #define ARGLIST (const struct swap_plan * plan, v2d * restrict data)
 #define SWAP(I, J)                                      \
@@ -99,6 +101,7 @@ FOREACH_MEDIUM_REV(BLOCK_SWAP_N)
 #undef SWAP
 #undef ARGLIST
 #undef PREFIX
+#undef LINKAGE
 
 const struct swap_plan small_plans[] =
 {
@@ -115,7 +118,8 @@ const swap_function_t medium_swap_functions[] =
 #undef NAME_FUNCTION
 };
 
-struct offset_pair unswizzle (unsigned swizzled, unsigned half_width)
+static struct offset_pair
+unswizzle (unsigned swizzled, unsigned half_width)
 {
         unsigned i = 0, j = 0, bit = 1;
         while (half_width --> 0) {
@@ -130,7 +134,8 @@ struct offset_pair unswizzle (unsigned swizzled, unsigned half_width)
         return (struct offset_pair){i, j};
 }
 
-unsigned reverse (unsigned x, unsigned width)
+static unsigned
+reverse (unsigned x, unsigned width)
 {
         unsigned acc = 0, bit = 1ul<<(width-1);
         for (unsigned i = 0; i < width; i++) {
@@ -142,7 +147,8 @@ unsigned reverse (unsigned x, unsigned width)
         return acc;
 }
 
-unsigned fill_even_pairs(unsigned width, struct offset_pair * pairs)
+static unsigned
+fill_even_pairs (unsigned width, struct offset_pair * pairs)
 {
         unsigned alloc = 0,
                  half  = width/2;
@@ -164,7 +170,8 @@ unsigned fill_even_pairs(unsigned width, struct offset_pair * pairs)
 }
 
 
-unsigned fill_odd_pairs(unsigned width, struct offset_pair * pairs)
+static unsigned 
+fill_odd_pairs (unsigned width, struct offset_pair * pairs)
 {
         unsigned alloc = 0,
                  half  = (width+1)/2;
@@ -187,7 +194,7 @@ unsigned fill_odd_pairs(unsigned width, struct offset_pair * pairs)
         return alloc;
 }
 
-const struct swap_plan *
+static const struct swap_plan *
 make_offset_pairs (unsigned middle_width, swap_function_t function)
 {
         assert(middle_width+2*LEAF_WIDTH <= 8*sizeof(long));
@@ -220,7 +227,8 @@ const struct swap_plan * plans [8*sizeof(long)] =
 #undef SMALL_PLAN
 };
 
-const struct swap_plan * revbin_plan(unsigned width)
+const struct
+swap_plan * revbin_plan(unsigned width)
 {
         assert(width < 8*sizeof(long));
 

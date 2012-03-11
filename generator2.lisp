@@ -53,7 +53,7 @@
 (defun emit-small-bit-reverse (width &optional output)
   (let ((indices (sorted-reverses width)))
     (format output "~
-void PREFIX(~D) ARGLIST
+LINKAGE void PREFIX(~D) ARGLIST
 \{
 ~{	SWAP(~{~D, ~D~});~^~%~}
 \}
